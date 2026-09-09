@@ -1,0 +1,22 @@
+services:
+  sutra-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/nishantmunjal2003/sutra-engine:latest
+    container_name: sutra-engine
+    restart: unless-stopped
+    ports:
+      - "8010:8010"
+    environment:
+      - PORT=8010
+      - HOST=0.0.0.0
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    volumes:
+      - sutra_data:/app/build
+
+volumes:
+  sutra_data:
+    driver: local

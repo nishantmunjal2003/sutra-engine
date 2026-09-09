@@ -23,6 +23,10 @@ dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.20.0",
     "python-multipart>=0.0.6",
+    "cryptography>=42.0.0",
+    "httpx>=0.25.0",
+    "pdfplumber>=0.10.0",
+    "pypdfium2>=4.0.0",
 ]
 
 [project.optional-dependencies]

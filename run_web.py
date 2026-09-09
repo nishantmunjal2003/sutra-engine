@@ -13,5 +13,8 @@ if not os.environ.get("ANTHROPIC_API_KEY"):
     os.environ["ANTHROPIC_API_KEY"] = os.environ.get("CLAUDE_API_KEY", "")
 
 if __name__ == "__main__":
-    print("Starting Sutra Press Web Server on http://127.0.0.1:8010 ...")
-    uvicorn.run("sutra.web.app:app", host="127.0.0.1", port=8010, reload=True)
+    host = os.environ.get("HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", 8010))
+    reload = os.environ.get("RELOAD", "false").lower() in ("true", "1")
+    print(f"Starting Sutra Press Web Server on http://{host}:{port} ...")
+    uvicorn.run("sutra.web.app:app", host=host, port=port, reload=reload)

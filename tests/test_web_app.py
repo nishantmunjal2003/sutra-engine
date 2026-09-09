@@ -337,25 +337,26 @@ def test_journal_profiles_flow(dummy_pdf_file):
             data={"journal_id": "testjournal", "journal_name": "Test Journal"}
         )
     assert response.status_code == 200
-    settings = response.json()
-    assert settings["journal_id"] == "testjournal"
-    assert settings["journal_name"] == "Test Journal"
-    assert "paper_size" in settings["page"]
-    assert "columns" in settings["page"]
+    res_data = response.json()
+    assert res_data["journal_id"] == "testjournal"
+    assert res_data["journal_name"] == "Test Journal"
+    journal_settings = res_data["settings"]
+    assert "paper_size" in journal_settings["page"]
+    assert "columns" in journal_settings["page"]
     
     # 2. Save profile
-    response_save = client.post("/journals", json=settings)
+    response_save = client.post("/journals", json=journal_settings)
     assert response_save.status_code == 200
     assert response_save.json()["success"] is True
     
     # 3. List profiles
-    response_list = client.get("/journals")
+    response_list = client.get("/api/journals")
     assert response_list.status_code == 200
     profiles = response_list.json()
     assert any(p["journal_id"] == "testjournal" for p in profiles)
     
     # 4. Get single profile
-    response_get = client.get("/journals/testjournal")
+    response_get = client.get("/api/journals/testjournal")
     assert response_get.status_code == 200
     assert response_get.json()["journal_name"] == "Test Journal"
     
