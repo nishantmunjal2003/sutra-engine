@@ -1,0 +1,202 @@
+\documentclass[\VAR{ paper_size },\VAR{ columns },\VAR{ font_size }pt]{article}
+
+% Standard Packages
+\usepackage[utf8]{inputenc}
+\usepackage[top=\VAR{ margin_top }in,bottom=\VAR{ margin_bottom }in,left=\VAR{ margin_left }in,right=\VAR{ margin_right }in,headheight=14pt,footskip=24pt]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{titling}
+\usepackage{authblk}
+
+% Dynamic Font Setup
+\VAR{ font_setup }
+
+% Dynamic Spacing Setup
+\usepackage{setspace}
+\setstretch{\VAR{ line_spacing }}
+\setlength{\parindent}{\VAR{ paragraph_indent }pt}
+\setlength{\parskip}{\VAR{ paragraph_spacing }pt}
+
+% Colors for Header and Footer Lines
+\definecolor{headerlinecolor}{HTML}{\VAR{ header_line_color_hex }}
+\definecolor{footerlinecolor}{HTML}{\VAR{ footer_line_color_hex }}
+
+% Running Headers and Footers (Page 2+)
+\pagestyle{fancy}
+\fancyhf{}
+
+\BLOCK{ if header_enabled }
+\fancyhead[L]{{\fontsize{\VAR{ header_font_size }pt}{\VAR{ header_font_size_lead }pt}\selectfont\VAR{ header_font_style } \VAR{ header_left }}}
+\fancyhead[C]{{\fontsize{\VAR{ header_font_size }pt}{\VAR{ header_font_size_lead }pt}\selectfont\VAR{ header_font_style } \VAR{ header_center }}}
+\fancyhead[R]{{\fontsize{\VAR{ header_font_size }pt}{\VAR{ header_font_size_lead }pt}\selectfont\VAR{ header_font_style } \VAR{ header_right }}}
+\BLOCK{ endif }
+
+\BLOCK{ if header_line_show }
+\renewcommand{\headrulewidth}{\VAR{ header_line_thickness }pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{headerlinecolor}\leaders\hrule height \headrulewidth\hfill}}
+\BLOCK{ else }
+\renewcommand{\headrulewidth}{0pt}
+\BLOCK{ endif }
+
+\BLOCK{ if footer_enabled }
+\fancyfoot[L]{{\fontsize{\VAR{ footer_font_size }pt}{\VAR{ footer_font_size_lead }pt}\selectfont\VAR{ footer_font_style } \VAR{ footer_left }}}
+\fancyfoot[C]{{\fontsize{\VAR{ footer_font_size }pt}{\VAR{ footer_font_size_lead }pt}\selectfont\VAR{ footer_font_style } \VAR{ footer_center }}}
+\fancyfoot[R]{{\fontsize{\VAR{ footer_font_size }pt}{\VAR{ footer_font_size_lead }pt}\selectfont\VAR{ footer_font_style } \VAR{ footer_right }}}
+\BLOCK{ endif }
+
+\BLOCK{ if footer_line_show }
+\renewcommand{\footrulewidth}{\VAR{ footer_line_thickness }pt}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{footerlinecolor}\leaders\hrule height \footrulewidth\hfill}}
+\BLOCK{ else }
+\renewcommand{\footrulewidth}{0pt}
+\BLOCK{ endif }
+
+% First Page Style (Header empty by default, footer if enabled for page 1)
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \BLOCK{ if footer_enabled and footer_from_page <= 1 }
+  \fancyfoot[L]{{\fontsize{\VAR{ footer_font_size }pt}{\VAR{ footer_font_size_lead }pt}\selectfont\VAR{ footer_font_style } \VAR{ footer_left }}}%
+  \fancyfoot[C]{{\fontsize{\VAR{ footer_font_size }pt}{\VAR{ footer_font_size_lead }pt}\selectfont\VAR{ footer_font_style } \VAR{ footer_center }}}%
+  \fancyfoot[R]{{\fontsize{\VAR{ footer_font_size }pt}{\VAR{ footer_font_size_lead }pt}\selectfont\VAR{ footer_font_style } \VAR{ footer_right }}}%
+  \BLOCK{ if footer_line_show }
+  \renewcommand{\footrulewidth}{\VAR{ footer_line_thickness }pt}%
+  \renewcommand{\footrule}{\hbox to\headwidth{\color{footerlinecolor}\leaders\hrule height \footrulewidth\hfill}}%
+  \BLOCK{ else }
+  \renewcommand{\footrulewidth}{0pt}%
+  \BLOCK{ endif }
+  \BLOCK{ else }
+  \renewcommand{\footrulewidth}{0pt}%
+  \BLOCK{ endif }
+}
+
+% Dynamic Title Block Setup
+\pretitle{%
+\BLOCK{ if first_page_header_enabled }
+\BLOCK{ if logo_position == 'center' }
+\begin{center}
+\BLOCK{ if logo_file }\includegraphics[height=\VAR{ logo_height }mm,keepaspectratio]{\VAR{ logo_file }}\\[0.5em]\BLOCK{ endif }
+\BLOCK{ if show_journal_name and journal_name }{\bfseries\large \VAR{ journal_name }}\par\BLOCK{ endif }
+\BLOCK{ if volume_issue_str }{\small \VAR{ volume_issue_str }}\par\BLOCK{ endif }
+\BLOCK{ if issn_str }{\footnotesize \VAR{ issn_str }}\par\BLOCK{ endif }
+\BLOCK{ if website_str }{\footnotesize \url{\VAR{ website_str }}}\par\BLOCK{ endif }
+\end{center}
+\BLOCK{ elif logo_position == 'right' }
+\noindent\begin{minipage}[c]{0.63\textwidth}
+\raggedright
+\BLOCK{ if show_journal_name and journal_name }{\bfseries\large \VAR{ journal_name }}\par\BLOCK{ endif }
+\BLOCK{ if volume_issue_str }{\small \VAR{ volume_issue_str }}\par\BLOCK{ endif }
+\BLOCK{ if issn_str }{\footnotesize \VAR{ issn_str }}\par\BLOCK{ endif }
+\BLOCK{ if website_str }{\footnotesize \url{\VAR{ website_str }}}\par\BLOCK{ endif }
+\end{minipage}\hfill\begin{minipage}[c]{0.35\textwidth}
+\raggedleft
+\BLOCK{ if logo_file }\includegraphics[height=\VAR{ logo_height }mm,keepaspectratio]{\VAR{ logo_file }}\BLOCK{ endif }
+\end{minipage}
+\BLOCK{ else }
+\noindent\begin{minipage}[c]{0.35\textwidth}
+\raggedright
+\BLOCK{ if logo_file }\includegraphics[height=\VAR{ logo_height }mm,keepaspectratio]{\VAR{ logo_file }}\BLOCK{ endif }
+\end{minipage}\hfill\begin{minipage}[c]{0.63\textwidth}
+\raggedleft
+\BLOCK{ if show_journal_name and journal_name }{\bfseries\large \VAR{ journal_name }}\par\BLOCK{ endif }
+\BLOCK{ if volume_issue_str }{\small \VAR{ volume_issue_str }}\par\BLOCK{ endif }
+\BLOCK{ if issn_str }{\footnotesize \VAR{ issn_str }}\par\BLOCK{ endif }
+\BLOCK{ if website_str }{\footnotesize \url{\VAR{ website_str }}}\par\BLOCK{ endif }
+\end{minipage}
+\BLOCK{ endif }
+\par\vspace{0.6em}
+\BLOCK{ if first_page_rule }
+\noindent{\color{headerlinecolor}\rule{\textwidth}{\VAR{ header_line_thickness }pt}}\par\vspace{1.5em}
+\BLOCK{ else }
+\vspace{1.2em}
+\BLOCK{ endif }
+\BLOCK{ endif }
+\begin{center}\fontsize{\VAR{ title_font_size }}{24}\selectfont\bfseries}
+\posttitle{\par\end{center}\vskip 0.5em}
+\renewcommand\Authfont{\fontsize{\VAR{ authors_font_size }}{14}\selectfont\VAR{ authors_font_style }}
+\renewcommand\Affilfont{\fontsize{\VAR{ affiliation_font_size }}{12}\selectfont\VAR{ affiliation_font_style }}
+
+% Dynamic Abstract Setup
+\usepackage{abstract}
+\renewcommand{\abstractnamefont}{\fontsize{\VAR{ abstract_heading_font_size }}{\VAR{ abstract_heading_font_size }}\selectfont\bfseries}
+\renewcommand{\abstracttextfont}{\fontsize{\VAR{ abstract_body_font_size }}{\VAR{ abstract_body_font_size }}\selectfont}
+
+% Dynamic Headings Setup
+\VAR{ titlesec_setup }
+
+% Dynamic Captions Setup
+\VAR{ caption_setup }
+
+% Dynamic Block Typesetting Setup (Footnotes, Lists, Blockquotes)
+\VAR{ blocks_setup }
+
+% Settings for Twocolumn Floats (if applicable)
+\BLOCK{ if columns == 'twocolumn' }
+\usepackage{dblfloatfix} % Fixes two-column floats at the bottom of pages
+\BLOCK{ endif }
+
+% Document Metadata
+\title{\VAR{ title }}
+
+\BLOCK{ for author in authors }
+\author[\VAR{ author.aff_markers }]{\VAR{ author.name }}
+\BLOCK{ endfor }
+
+\BLOCK{ for aff in affiliations }
+\affil[\VAR{ aff.marker }]{\VAR{ aff.text }}
+\BLOCK{ endfor }
+
+\date{}
+
+\begin{document}
+
+\BLOCK{ if columns == 'twocolumn' and abstract_full_width }
+\twocolumn[
+  \maketitle
+  \BLOCK{ if abstract }
+  \begin{abstract}
+  \VAR{ abstract }
+  \BLOCK{ if keywords and abstract_include_keywords }
+  \par\vspace{0.5em}\noindent \textbf{\VAR{ keywords_label }} \VAR{ keywords }
+  \BLOCK{ endif }
+  \end{abstract}
+  \BLOCK{ endif }
+  \BLOCK{ if keywords and not abstract_include_keywords }
+  \vspace{0.5em}
+  \noindent \textbf{\VAR{ keywords_label }} \VAR{ keywords }
+  \BLOCK{ endif }
+  \vspace{1.5em}
+]
+\BLOCK{ else }
+\maketitle
+
+\BLOCK{ if abstract }
+\begin{abstract}
+\VAR{ abstract }
+\BLOCK{ if keywords and abstract_include_keywords }
+\par\vspace{0.5em}\noindent \textbf{\VAR{ keywords_label }} \VAR{ keywords }
+\BLOCK{ endif }
+\end{abstract}
+\BLOCK{ endif }
+
+\BLOCK{ if keywords and not abstract_include_keywords }
+\noindent \textbf{\VAR{ keywords_label }} \VAR{ keywords }
+\BLOCK{ endif }
+
+\vspace{1em}
+\BLOCK{ endif }
+
+\VAR{ body }
+
+\BLOCK{ if references }
+\VAR{ references }
+\BLOCK{ endif }
+
+\end{document}

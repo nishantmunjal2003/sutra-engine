@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sūtra Press — Manuscripts Dashboard</title>
+    <meta name="application-name" content="Sutra Press">
+    <meta name="description" content="Sūtra Press: A scholarly manuscript engine for structured review, JATS XML validation, and LaTeX typesetting.">
+    
+    <!-- Google Fonts: Inter + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+</head>
+<body>
+    <!-- ================================================================
+         LOGIN OVERLAY
+         ================================================================ -->
+    <div id="loginSection" class="login-overlay hidden">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="login-logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="12" fill="url(#loginGrad)"/>
+                        <path d="M12 28V12h4l4 10 4-10h4v16h-3V17l-3.5 9h-3L15 17v11h-3z" fill="#FFF"/>
+                        <defs>
+                            <linearGradient id="loginGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#E05D26"/>
+                                <stop offset="1" stop-color="#4F46E5"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>Sūtra Press</h1>
+                <p>Structured Review Manuscript Engine</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required class="form-input" placeholder="Enter username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required class="form-input" placeholder="Enter password" autocomplete="current-password">
+                </div>
+                
+                <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-full">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="login-demo-info">
+                <strong>Demo Credentials:</strong><br>
+                • Admin: <code>admin</code> / <code>admin</code> (Full access)<br>
+                • Editor: <code>editor</code> / <code>editor</code> (Standard access)
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MAIN APPLICATION SHELL
+         ================================================================ -->
+    <div id="appContainer" class="app-shell hidden">
+        
+        <!-- ============================================================
+             TOP NAVBAR
+             ============================================================ -->
+        <nav class="app-navbar" id="appHeader">
+            <div class="nav-left">
+                <a class="brand-logo" id="brandLogoLink" href="/">
+                    <div class="brand-logo-icon">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="32" height="32" rx="8" fill="url(#navGrad)"/>
+                            <path d="M9 23V9h3.2l3.2 8 3.2-8H21.8v14h-2.4V13.5l-2.8 7.2h-2.4l-2.8-7.2V23H9z" fill="#FFF"/>
+                            <defs>
+                                <linearGradient id="navGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#E05D26"/>
+                                    <stop offset="1" stop-color="#4F46E5"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="brand-title-group">
+                        <h1>Sūtra Press</h1>
+                        <span>Manuscript Engine</span>
+                    </div>
+                </a>
+            </div>
+            <div class="nav-right" id="headerActions">
+                <div id="dashboardHeaderActions" class="nav-actions-group">
+                    <span class="user-welcome">Welcome, <strong id="headerUsername">User</strong></span>
+                    <button type="button" id="logoutBtn" class="btn btn-outline btn-sm">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ============================================================
+             APP BODY: SIDEBAR + MAIN CONTENT
+             ============================================================ -->
+        <div class="app-body">
+            
+            <!-- ==========================================================
+                 LEFT SIDEBAR NAVIGATION
+                 ========================================================== -->
+            <aside class="app-sidebar" id="appSidebar">
+                <nav class="sidebar-nav">
+                    <div class="sidebar-section-label">Navigation</div>
+                    <a href="/" class="sidebar-nav-item active" id="navManuscripts">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Manuscripts</span>
+                    </a>
+                    <a href="/journals" class="sidebar-nav-item" id="navJournals">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        <span>Journal Profiles</span>
+                    </a>
+                    <a href="/admin" class="sidebar-nav-item hidden" id="navAdmin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Admin Panel</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-section-label">Engine</div>
+                    <div class="sidebar-info">
+                        <span>JATS 1.3 + LaTeX</span>
+                        <span class="sidebar-version">v2.0</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ==========================================================
+                 MAIN CONTENT AREA
+                 ========================================================== -->
+            <main class="app-main">
+
+                <!-- ======================================================
+                     SECTION: MANUSCRIPTS DASHBOARD
+                     ====================================================== -->
+                <div id="dashboardSection" class="content-section">
+                    
+                    <!-- Hero Welcome Banner -->
+                    <div class="dashboard-hero">
+                        <div class="hero-banner">
+                            <div class="hero-text">
+                                <h2>Manuscripts Dashboard</h2>
+                                <p>Configure layouts, perform schema-validated checks, and download typeset JATS &amp; LaTeX outputs.</p>
+                            </div>
+                            <div class="hero-stats">
+                                <div class="stat-chip">
+                                    <span>Total Projects</span>
+                                    <strong id="projectsCount">0</strong>
+                                </div>
+                                <div class="stat-chip">
+                                    <span>Engine</span>
+                                    <strong>JATS 1.3</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Start Tiles -->
+                    <div class="quick-start-section">
+                        <h3 class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            Quick Start
+                        </h3>
+                        <div class="quick-start-grid">
+                            <div class="quick-card" id="quickUpload">
+                                <div class="quick-icon-badge orange">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                </div>
+                                <div class="quick-card-body">
+                                    <h3>Upload Manuscript</h3>
+                                    <p>Upload a DOCX to parse structure and begin tag review</p>
+                                </div>
+                            </div>
+                            <div class="quick-card" id="quickJournal">
+                                <div class="quick-icon-badge indigo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                </div>
+                                <div class="quick-card-body">
+                                    <h3>Onboard Journal</h3>
+                                    <p>Create a custom journal profile from a reference PDF</p>
+                                </div>
+                            </div>
+                            <div class="quick-card" id="quickGenerate">
+                                <div class="quick-icon-badge teal">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                                </div>
+                                <div class="quick-card-body">
+                                    <h3>Validate &amp; Compile</h3>
+                                    <p>Generate JATS XML + LaTeX + PDF in one synchronized pass</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects + Upload 2-column Grid -->
+                    <div class="dashboard-main-grid">
+                        <!-- Left Column: Projects List -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3>Your Projects</h3>
+                                <span class="projects-count-badge" id="projectsCountBadge">0 projects</span>
+                            </div>
+                            <div class="projects-table-container">
+                                <div id="dashboardProjectsList" class="projects-list">
+                                    <!-- Loaded dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Upload -->
+                        <div class="panel-card">
+                            <section id="uploadSection">
+                                <div class="panel-header" style="margin-bottom: 1rem;">
+                                    <h3>Convert Manuscript</h3>
+                                </div>
+                                <p class="upload-desc">Upload a DOCX manuscript file to begin structured review, structural retagging, and compile synchronized outputs.</p>
+                                
+                                <form id="uploadForm" enctype="multipart/form-data">
+                                    <!-- Drop Zone -->
+                                    <div class="drop-zone" id="dropZone">
+                                        <div class="drop-zone-content">
+                                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                            </svg>
+                                            <p class="drop-text-primary">Drag & Drop file here or <span>browse files</span></p>
+                                            <p class="drop-text-secondary">Word Document (.docx) manuscripts up to 20MB</p>
+                                        </div>
+                                        <input type="file" name="file" id="fileInput" accept=".docx" class="hidden">
+                                    </div>
+                                    
+                                    <!-- Selected File Info -->
+                                    <div id="fileInfo" class="file-info-bar hidden">
+                                        <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <div class="file-details">
+                                            <span id="fileName" class="file-name">filename.docx</span>
+                                            <span id="fileSize" class="file-size">1.2 MB</span>
+                                        </div>
+                                        <button type="button" id="removeFileBtn" class="btn-remove">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <button type="submit" id="submitBtn" class="btn btn-primary btn-full" disabled>
+                                        <span>Upload & Parse Structure</span>
+                                    </button>
+                                </form>
+
+                                <!-- State placeholders for workflow & test compatibility -->
+                                <div id="progressCard" class="hidden"></div>
+                                <div id="resultsCard" class="hidden"></div>
+                            </section>
+                        </div>
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 Sūtra Press. Built on open standards (JATS, LaTeX, Tectonic).</p>
+        </footer>
+    </div>
+
+    <!-- Script imports -->
+    <script src="/static/js/shared.js?v=3"></script>
+    <script src="/static/js/main.js?v=3"></script>
+</body>
+</html>

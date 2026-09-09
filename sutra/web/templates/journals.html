@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal Profiles — Sūtra Press</title>
+    <meta name="description" content="Manage journal style profiles for structured manuscript typesetting.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <style>
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .spin-anim { animation: spin 0.9s linear infinite; }
+    </style>
+</head>
+<body>
+    <div id="appContainer" class="app-shell">
+
+        <!-- TOP NAVBAR -->
+        <nav class="app-navbar" id="appHeader">
+            <div class="nav-left">
+                <a class="brand-logo" href="/" id="brandLogoLink">
+                    <div class="brand-logo-icon">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="32" height="32" rx="8" fill="url(#navGrad2)"/>
+                            <path d="M9 23V9h3.2l3.2 8 3.2-8H21.8v14h-2.4V13.5l-2.8 7.2h-2.4l-2.8-7.2V23H9z" fill="#FFF"/>
+                            <defs>
+                                <linearGradient id="navGrad2" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#E05D26"/>
+                                    <stop offset="1" stop-color="#4F46E5"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Sūtra Press</span>
+                        <span class="brand-sub">MANUSCRIPT ENGINE</span>
+                    </div>
+                </a>
+            </div>
+            <div class="nav-right">
+                <span class="user-welcome">Welcome, <strong id="headerUsername">User</strong></span>
+                <button type="button" id="logoutBtn" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </nav>
+
+        <!-- APP BODY: SIDEBAR + MAIN -->
+        <div class="app-body">
+
+            <!-- LEFT SIDEBAR -->
+            <aside class="app-sidebar">
+                <nav class="sidebar-nav">
+                    <div class="sidebar-section-label">Navigation</div>
+                    <a href="/" class="sidebar-nav-item" id="navManuscripts">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Manuscripts</span>
+                    </a>
+                    <div class="sidebar-nav-group">
+                        <a href="/journals" class="sidebar-nav-item active" id="navJournals">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <span>Journal Profiles</span>
+                        </a>
+                        
+                        <!-- Sub-Headings: All Journal Profiles -->
+                        <div class="sidebar-subnav" id="sidebarJournalProfilesList">
+                            <div class="sidebar-subnav-loading">Loading profiles…</div>
+                        </div>
+
+                        <div class="sidebar-subnav-action">
+                            <button type="button" id="sidebarNewProfileBtn" class="sidebar-subnav-add-btn">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                <span>+ New Profile</span>
+                            </button>
+                        </div>
+                    </div>
+                    <a href="/admin" class="sidebar-nav-item hidden" id="navAdmin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Admin Panel</span>
+                    </a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="sidebar-section-label">Engine</div>
+                    <div class="sidebar-info">
+                        <span>JATS 1.3 + LaTeX</span>
+                        <span class="sidebar-version">v2.0</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="app-main">
+
+                <!-- Hero Banner -->
+                <div class="dashboard-hero">
+                    <div class="hero-banner hero-indigo">
+                        <div class="hero-text">
+                            <h2>Journal Style Profiles</h2>
+                            <p>Configure journal identity, branding logo, ISSNs, running headers &amp; footers, colored lines, and multi-volume management.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section" style="max-width: 1350px; width: 100%; box-sizing: border-box; padding: 1rem 1.5rem 3rem;">
+
+                    <!-- Single Main Card (Full Width, Perfectly Contained) -->
+                    <div class="panel-card" style="width: 100%; box-sizing: border-box;">
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 0.75rem;">
+                            <div>
+                                <h3 id="formModeTitle" style="margin: 0 0 0.25rem 0; font-size: 1.15rem;">Journal Profile Configuration</h3>
+                                <p class="upload-desc" style="margin: 0; font-size: 0.825rem;">All fields below define the typographic, branding, and block typesetting style of the selected journal.</p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                <input type="file" id="autoDetectPdfInput" accept=".pdf" class="hidden">
+                                <button type="button" id="autoDetectPdfBtn" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 0.4rem; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border: none; color: #fff; font-weight: 600; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); cursor: pointer;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                    <span>✨ Auto-Detect from PDF</span>
+                                </button>
+                                <button type="button" id="aiModelsConfigBtn" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 0.35rem; font-weight: 600;">
+                                    <span>🤖 AI Routing &amp; Keys</span>
+                                </button>
+                                <button type="button" id="deleteCurrentProfileBtn" class="btn btn-outline btn-sm" style="color:var(--state-error-text);border-color:var(--state-error-border); display: none;">
+                                    Delete Profile
+                                </button>
+                                <button type="button" id="createNewProfileBtn" class="btn btn-outline btn-sm">
+                                    Reset to Default Template
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- AI Cross-Check Verification Card / Banner -->
+                        <div id="aiVerificationBanner" class="hidden" style="margin-bottom: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.3); background: linear-gradient(to right, rgba(99, 102, 241, 0.06), rgba(139, 92, 246, 0.03)); padding: 1rem 1.25rem; position: relative;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                                <div style="display: flex; gap: 0.75rem; align-items: flex-start; width: 100%;">
+                                    <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--brand-indigo); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem;">
+                                        ✨
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                                            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-primary);" id="aiVerificationTitle">AI Cross-Check: 100% Validated</h4>
+                                            <span id="aiVerificationBadge" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: #059669; font-weight: 600;">Confidence: 98%</span>
+                                            <span id="aiTokenBadge" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 9999px; background: rgba(99, 102, 241, 0.12); color: var(--brand-indigo); font-weight: 600;">⚡ 0 Tokens Used (Local Engine)</span>
+                                        </div>
+                                        <p id="aiVerificationSummary" style="margin: 0.35rem 0 0.6rem 0; font-size: 0.825rem; color: var(--text-secondary); line-height: 1.4;">
+                                            All primary layout geometry, font point sizes, logo raster imagery, running header lines, and ISSN metadata were extracted and cross-checked against the reference PDF.
+                                        </p>
+                                        <div id="aiChecksList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.5rem; margin-top: 0.5rem;">
+                                            <!-- Dynamically populated check items -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id="closeAiVerificationBtn" style="background: none; border: none; font-size: 1.25rem; line-height: 1; cursor: pointer; color: var(--text-muted); padding: 0.25rem;" title="Dismiss">&times;</button>
+                            </div>
+                        </div>
+
+                        <!-- Profile Settings Editor: ALWAYS OPEN & VISIBLE -->
+                        <div id="journalSettingsEditor" class="journal-settings-editor">
+
+                            <!-- Tab Bar Navigation -->
+                            <div class="journal-tabs-header" id="journalTabsNav" role="tablist">
+                                <button type="button" class="journal-tab-btn active" data-tab="tabIdentity" role="tab" id="tabBtnIdentity">🏷️ Identity &amp; Logo</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabVolumes" role="tab" id="tabBtnVolumes">📚 Volumes &amp; Issues</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabRunningHeader" role="tab" id="tabBtnRunningHeader">📑 Running Header</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabRunningFooter" role="tab" id="tabBtnRunningFooter">📄 Running Footer</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabTitleBanner" role="tab" id="tabBtnTitleBanner">🎨 Title Page Banner</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabLayout" role="tab" id="tabBtnLayout">📐 Page Layout</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabTypography" role="tab" id="tabBtnTypography">✍️ Typography &amp; Headings</button>
+                                <button type="button" class="journal-tab-btn" data-tab="tabBlockTypesetting" role="tab" id="tabBtnBlockTypesetting">🧩 Block Typesetting</button>
+                            </div>
+
+                            <!-- TAB 1: Journal Identity & Logo -->
+                            <div class="journal-tab-pane active" id="tabIdentity">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Journal Identity &amp; Branding</h5>
+                                    
+                                    <div class="form-row-2">
+                                        <div class="form-group">
+                                            <label for="journalNameInput"><strong>Journal Name</strong></label>
+                                            <input type="text" id="journalNameInput" required class="form-input" placeholder="e.g. Journal of Applied and Natural Science" value="Journal of Applied and Natural Science">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="journalIdInput"><strong>Journal ID (Unique Slug)</strong></label>
+                                            <input type="text" id="journalIdInput" required class="form-input" placeholder="e.g. jans" value="jans">
+                                        </div>
+                                    </div>
+
+                                    <!-- Logo Uploader & Preview -->
+                                    <div class="journal-logo-section">
+                                        <div class="logo-preview-box" id="logoPreviewContainer">
+                                            <img id="logoPreviewImg" class="logo-preview-img hidden" alt="Journal Logo Preview">
+                                            <div id="logoPlaceholder" class="logo-placeholder">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                                <span>No logo uploaded</span>
+                                            </div>
+                                        </div>
+                                        <div class="logo-actions">
+                                            <input type="file" id="logoFileInput" accept=".png,.jpg,.jpeg,.webp,.svg" class="hidden">
+                                            <button type="button" id="uploadLogoBtn" class="btn btn-outline btn-sm">
+                                                Upload Logo (PNG/JPG)
+                                            </button>
+                                            <button type="button" id="removeLogoBtn" class="btn btn-outline btn-sm hidden" style="color:var(--state-error-text);border-color:var(--state-error-border);">
+                                                Remove Logo
+                                            </button>
+                                            <span id="logoUploadStatus" class="upload-status-text"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- ISSNs & Links -->
+                                    <div class="form-row-2" style="margin-top: 1rem;">
+                                        <div class="form-group">
+                                            <label for="setIssnPrint">ISSN (Print)</label>
+                                            <input type="text" id="setIssnPrint" class="form-input" placeholder="e.g. 0974-9411">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setIssnOnline">ISSN (Online)</label>
+                                            <input type="text" id="setIssnOnline" class="form-input" placeholder="e.g. 2231-5209">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row-2">
+                                        <div class="form-group">
+                                            <label for="setWebsite">Journal Website URL</label>
+                                            <input type="url" id="setWebsite" class="form-input" placeholder="https://journals.ansfoundation.org">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setPublisher">Publisher / Society Name</label>
+                                            <input type="text" id="setPublisher" class="form-input" placeholder="e.g. Applied and Natural Science Foundation">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 2: Volumes & Issues -->
+                            <div class="journal-tab-pane" id="tabVolumes">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Volumes &amp; Issues Management</h5>
+                                    <p class="upload-desc" style="font-size:0.84rem;margin-top:0.25rem;margin-bottom:0.75rem;">
+                                        Manage publishing volumes, issue numbers, and select the currently <strong>Active</strong> volume for new manuscript compilations.
+                                    </p>
+
+                                    <!-- Volumes Table -->
+                                    <div class="volume-table-wrapper">
+                                        <table class="volume-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 50px; text-align: center;">Active</th>
+                                                    <th>Volume #</th>
+                                                    <th>Issue #</th>
+                                                    <th>Year</th>
+                                                    <th>Page Range</th>
+                                                    <th style="width: 60px; text-align: center;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="volumeIssuesTbody">
+                                                <!-- Dynamic rows -->
+                                            </tbody>
+                                        </table>
+                                        <div id="noVolumesText" class="empty-state-text hidden" style="padding: 1rem;">No volume entries yet. Add one below.</div>
+                                    </div>
+
+                                    <!-- Add New Volume Row Bar -->
+                                    <div class="volume-add-bar">
+                                        <input type="text" id="newVolNo" class="form-input" placeholder="Vol (e.g. 16)" style="width: 110px;">
+                                        <input type="text" id="newIssueNo" class="form-input" placeholder="Issue (e.g. 1)" style="width: 110px;">
+                                        <input type="number" id="newVolYear" class="form-input" placeholder="Year" style="width: 95px;" value="2026">
+                                        <input type="text" id="newVolPageRange" class="form-input" placeholder="Page range (e.g. 1–10)" style="flex: 1; min-width: 160px;">
+                                        <button type="button" id="addVolumeBtn" class="btn btn-outline btn-sm" style="color:var(--brand-indigo);border-color:var(--brand-indigo);font-weight:600;">
+                                            + Add Volume / Issue
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 3: Running Header (Page 2+) -->
+                            <div class="journal-tab-pane" id="tabRunningHeader">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Running Header (from Page 2)</h5>
+                                    
+                                    <div class="form-row-2" style="margin-bottom: 0.75rem;">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setHeaderEnabled" checked>
+                                            <strong>Enable Running Header</strong>
+                                        </label>
+                                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                                            <label for="setHeaderFromPage" style="font-size:0.84rem;font-weight:600;">Start on Page:</label>
+                                            <input type="number" id="setHeaderFromPage" class="form-input" value="2" min="1" max="10" style="width: 70px;">
+                                            <span style="font-size:0.8rem;color:var(--text-muted);">(Standard is Page 2)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row-3">
+                                        <div class="form-group">
+                                            <label for="setHeaderLeft">Header Left Text</label>
+                                            <input type="text" id="setHeaderLeft" class="form-input" placeholder="{authors}" value="{authors}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setHeaderCenter">Header Center Text</label>
+                                            <input type="text" id="setHeaderCenter" class="form-input" placeholder="(optional)">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setHeaderRight">Header Right Text</label>
+                                            <input type="text" id="setHeaderRight" class="form-input" placeholder="{journal} {volume}({issue}), {year}" value="{journal} {volume}({issue}), {year}">
+                                        </div>
+                                    </div>
+                                    <p style="font-size:0.75rem; color:var(--text-muted); margin-top:-0.4rem; margin-bottom:0.75rem;">
+                                        Available template tags: <code>{authors}</code>, <code>{journal}</code>, <code>{volume}</code>, <code>{issue}</code>, <code>{year}</code>, <code>{doi}</code>
+                                    </p>
+
+                                    <div class="form-row-3">
+                                        <div class="form-group">
+                                            <label for="setHeaderSize">Font Size (pt)</label>
+                                            <input type="number" step="0.5" id="setHeaderSize" class="form-input" value="8.5">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setHeaderStyle">Font Style</label>
+                                            <select id="setHeaderStyle" class="form-input">
+                                                <option value="italic" selected>Italic</option>
+                                                <option value="normal">Normal</option>
+                                                <option value="bold">Bold</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Header Line Rule</label>
+                                            <div style="display:flex;align-items:center;gap:0.75rem;padding-top:0.4rem;">
+                                                <label class="checkbox-label" style="font-size:0.84rem;">
+                                                    <input type="checkbox" id="setHeaderLineShow" checked>
+                                                    Show Rule Line
+                                                </label>
+                                                <div style="display:flex;align-items:center;gap:0.3rem;">
+                                                    <input type="number" step="0.1" id="setHeaderLineThickness" class="form-input" value="0.8" style="width:65px;">
+                                                    <span style="font-size:0.78rem;color:var(--text-muted);">pt</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-top:0.5rem;">
+                                        <label for="setHeaderLineColor">Header Line Color (Hex)</label>
+                                        <div class="color-picker-input-group">
+                                            <input type="color" id="setHeaderLineColorPicker" class="color-picker-swatch" value="#CC0066">
+                                            <input type="text" id="setHeaderLineColor" class="form-input" value="#CC0066" style="width: 130px; font-family:var(--font-mono); font-weight:600;">
+                                            <span style="font-size:0.8rem;color:var(--text-muted);">Synchronized color picker and Hex code</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 4: Running Footer -->
+                            <div class="journal-tab-pane" id="tabRunningFooter">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Running Footer</h5>
+                                    
+                                    <div class="form-row-2" style="margin-bottom: 0.75rem;">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setFooterEnabled" checked>
+                                            <strong>Enable Running Footer</strong>
+                                        </label>
+                                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                                            <label for="setFooterFromPage" style="font-size:0.84rem;font-weight:600;">Start on Page:</label>
+                                            <input type="number" id="setFooterFromPage" class="form-input" value="1" min="1" max="10" style="width: 70px;">
+                                            <span style="font-size:0.8rem;color:var(--text-muted);">(Starts from Page 1)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row-3">
+                                        <div class="form-group">
+                                            <label for="setFooterLeft">Footer Left Text</label>
+                                            <input type="text" id="setFooterLeft" class="form-input" placeholder="(optional)">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setFooterCenter">Footer Center Text</label>
+                                            <input type="text" id="setFooterCenter" class="form-input" value="\thepage" placeholder="\thepage (Page number)">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setFooterRight">Footer Right Text</label>
+                                            <input type="text" id="setFooterRight" class="form-input" placeholder="(optional)">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row-3">
+                                        <div class="form-group">
+                                            <label for="setFooterSize">Font Size (pt)</label>
+                                            <input type="number" step="0.5" id="setFooterSize" class="form-input" value="8.5">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setFooterStyle">Font Style</label>
+                                            <select id="setFooterStyle" class="form-input">
+                                                <option value="normal" selected>Normal</option>
+                                                <option value="italic">Italic</option>
+                                                <option value="bold">Bold</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Footer Line Rule</label>
+                                            <div style="display:flex;align-items:center;gap:0.75rem;padding-top:0.4rem;">
+                                                <label class="checkbox-label" style="font-size:0.84rem;">
+                                                    <input type="checkbox" id="setFooterLineShow" checked>
+                                                    Show Rule Line
+                                                </label>
+                                                <div style="display:flex;align-items:center;gap:0.3rem;">
+                                                    <input type="number" step="0.1" id="setFooterLineThickness" class="form-input" value="0.8" style="width:65px;">
+                                                    <span style="font-size:0.78rem;color:var(--text-muted);">pt</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-top:0.5rem;">
+                                        <label for="setFooterLineColor">Footer Line Color (Hex)</label>
+                                        <div class="color-picker-input-group">
+                                            <input type="color" id="setFooterLineColorPicker" class="color-picker-swatch" value="#CC0066">
+                                            <input type="text" id="setFooterLineColor" class="form-input" value="#CC0066" style="width: 130px; font-family:var(--font-mono); font-weight:600;">
+                                            <span style="font-size:0.8rem;color:var(--text-muted);">Synchronized color picker and Hex code</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 5: First Page Header Banner -->
+                            <div class="journal-tab-pane" id="tabTitleBanner">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>First Page Header (Title Page Branding Banner)</h5>
+                                    <p class="upload-desc" style="font-size:0.84rem;margin-top:0.25rem;margin-bottom:0.75rem;">
+                                        Controls how the journal identity, logo, and publication metadata appear at the very top of Page 1.
+                                    </p>
+
+                                    <div class="form-group" style="margin-bottom: 1rem;">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setFirstPageHeaderEnabled" checked>
+                                            <strong>Enable Title Page Branding Banner</strong>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-row-2">
+                                        <div class="form-group">
+                                            <label for="setLogoPosition">Logo Position</label>
+                                            <select id="setLogoPosition" class="form-input">
+                                                <option value="left" selected>Left (Standard)</option>
+                                                <option value="center">Center</option>
+                                                <option value="right">Right</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setLogoHeight">Logo Max Height (mm)</label>
+                                            <input type="number" step="1.0" id="setLogoHeight" class="form-input" value="16.0">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row-4" style="margin-top:0.5rem;">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setShowLogo" checked>
+                                            <span>Show Logo</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setShowJournalName" checked>
+                                            <span>Show Journal Name</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setShowIssn" checked>
+                                            <span>Show ISSNs</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="setShowVolumeIssue" checked>
+                                            <span>Show Vol / Issue</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 6: Page Layout -->
+                            <div class="journal-tab-pane" id="tabLayout">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Page Layout &amp; Margins</h5>
+                                    <div class="form-row-2">
+                                        <div class="form-group">
+                                            <label for="setPaperSize">Paper Size</label>
+                                            <select id="setPaperSize" class="form-input">
+                                                <option value="a4" selected>A4</option>
+                                                <option value="letter">Letter</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setColumns">Columns</label>
+                                            <select id="setColumns" class="form-input">
+                                                <option value="1">1 Column</option>
+                                                <option value="2" selected>2 Columns</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row-4">
+                                        <div class="form-group">
+                                            <label for="setMarginTop">Margin Top (in)</label>
+                                            <input type="number" step="0.05" id="setMarginTop" class="form-input" value="0.75">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setMarginBottom">Margin Bottom (in)</label>
+                                            <input type="number" step="0.05" id="setMarginBottom" class="form-input" value="0.75">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setMarginLeft">Margin Left (in)</label>
+                                            <input type="number" step="0.05" id="setMarginLeft" class="form-input" value="0.75">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="setMarginRight">Margin Right (in)</label>
+                                            <input type="number" step="0.05" id="setMarginRight" class="form-input" value="0.75">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 7: Typography & Headings (COMBINING 7, 8, and 9) -->
+                            <div class="journal-tab-pane" id="tabTypography">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Typography &amp; Headings</h5>
+                                    <p class="upload-desc" style="font-size:0.84rem;margin-top:0.25rem;margin-bottom:1rem;">
+                                        Unified typography settings combining body text, title block, and section heading font sizes.
+                                    </p>
+
+                                    <!-- Sub-block A: Body Text Typography (Old #7) -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>A. Body Text Typography</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setBodyFont">Font Family</label>
+                                                <select id="setBodyFont" class="form-input">
+                                                    <option value="Times New Roman" selected>Times New Roman</option>
+                                                    <option value="Arial">Arial / Helvetica</option>
+                                                    <option value="Courier">Courier</option>
+                                                    <option value="Computer Modern">Computer Modern</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setBodySize">Body Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setBodySize" class="form-input" value="10.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setLineSpacing">Line Spacing</label>
+                                                <select id="setLineSpacing" class="form-input">
+                                                    <option value="1.0">Single (1.0)</option>
+                                                    <option value="1.15" selected>1.15</option>
+                                                    <option value="1.25">1.25</option>
+                                                    <option value="1.5">1.5</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sub-block B: Title Block Typography (Old #8) -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>B. Title Block &amp; Author Byline</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setTitleSize">Title Size (pt)</label>
+                                                <input type="number" step="0.5" id="setTitleSize" class="form-input" value="16.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setAuthorsSize">Authors Size (pt)</label>
+                                                <input type="number" step="0.5" id="setAuthorsSize" class="form-input" value="11.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setAffiliationSize">Affiliation Size (pt)</label>
+                                                <input type="number" step="0.5" id="setAffiliationSize" class="form-input" value="9.0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sub-block C: Headings Font Sizes (Old #9) -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>C. Headings Font Sizes (pt)</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setH1Size">Heading 1 (H1)</label>
+                                                <input type="number" step="0.5" id="setH1Size" class="form-input" value="12.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setH2Size">Heading 2 (H2)</label>
+                                                <input type="number" step="0.5" id="setH2Size" class="form-input" value="11.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setH3Size">Heading 3 (H3)</label>
+                                                <input type="number" step="0.5" id="setH3Size" class="form-input" value="10.0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 8: Block Typesetting (ALL MANUSCRIPT BLOCKS) -->
+                            <div class="journal-tab-pane" id="tabBlockTypesetting">
+                                <div class="settings-block" style="border:none; padding:0; margin:0;">
+                                    <h5>Block Typesetting Specifications</h5>
+                                    <p class="upload-desc" style="font-size:0.84rem;margin-top:0.25rem;margin-bottom:1rem;">
+                                        Typesetting and formatting rules for all manuscript blocks (Abstract, Keywords, Figures, Tables, Equations, and References).
+                                    </p>
+
+                                    <!-- 1. Abstract Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>1. Abstract Block</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setAbstractHeading">Heading Label</label>
+                                                <input type="text" id="setAbstractHeading" class="form-input" value="Abstract">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setAbstractHeadingSize">Heading Size (pt)</label>
+                                                <input type="number" step="0.5" id="setAbstractHeadingSize" class="form-input" value="11.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setAbstractBodySize">Body Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setAbstractBodySize" class="form-input" value="9.0">
+                                            </div>
+                                        </div>
+                                        <div class="form-row-3" style="margin-top: 0.4rem;">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setAbstractIndented" checked>
+                                                Indent Abstract Margins
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setAbstractBoxBorder">
+                                                Border Box around Abstract
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setAbstractLabelsBold" checked>
+                                                Bold Structured Sub-labels
+                                            </label>
+                                        </div>
+                                        <div class="form-row-3" style="margin-top: 0.4rem;">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setAbstractFullWidth" checked>
+                                                Full-width Abstract in 2-column layout
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setAbstractSingleParagraph">
+                                                Merge abstract into single paragraph
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setAbstractIncludeKeywords">
+                                                Include keywords inside abstract box
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- 2. Keywords Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>2. Keywords Block</span>
+                                        </div>
+                                        <div class="form-row-4">
+                                            <div class="form-group">
+                                                <label for="setKeywordsLabel">Prefix Label</label>
+                                                <input type="text" id="setKeywordsLabel" class="form-input" value="Keywords:">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setKeywordsWeight">Label Weight</label>
+                                                <select id="setKeywordsWeight" class="form-input">
+                                                    <option value="bold" selected>Bold</option>
+                                                    <option value="normal">Normal</option>
+                                                    <option value="italic">Italic</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setKeywordsSize">Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setKeywordsSize" class="form-input" value="9.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setKeywordsSeparator">Separator</label>
+                                                <input type="text" id="setKeywordsSeparator" class="form-input" value="; ">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. Figures Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>3. Figures &amp; Captions</span>
+                                        </div>
+                                        <div class="form-row-4">
+                                            <div class="form-group">
+                                                <label for="setFigureCaptionPos">Caption Position</label>
+                                                <select id="setFigureCaptionPos" class="form-input">
+                                                    <option value="below" selected>Below Figure</option>
+                                                    <option value="above">Above Figure</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setFigurePrefix">Label Prefix</label>
+                                                <input type="text" id="setFigurePrefix" class="form-input" value="Figure">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setFigureLabelStyle">Label Style</label>
+                                                <select id="setFigureLabelStyle" class="form-input">
+                                                    <option value="bold" selected>Bold (Figure 1:)</option>
+                                                    <option value="italic">Italic (Figure 1:)</option>
+                                                    <option value="normal">Normal</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setFigureCaptionSize">Caption Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setFigureCaptionSize" class="form-input" value="9.0">
+                                            </div>
+                                        </div>
+                                        <div class="form-row-3" style="margin-top: 0.3rem;">
+                                            <div class="form-group">
+                                                <label for="setFigureSeparator">Label Separator</label>
+                                                <input type="text" id="setFigureSeparator" class="form-input" value=".">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setFigureCaptionJustification">Caption Justification</label>
+                                                <select id="setFigureCaptionJustification" class="form-input">
+                                                    <option value="justified" selected>Justified</option>
+                                                    <option value="left">Left (Ragged Right)</option>
+                                                    <option value="center">Centered</option>
+                                                </select>
+                                            </div>
+                                            <div style="display:flex;align-items:flex-end;padding-bottom:0.75rem;">
+                                                <label class="checkbox-label">
+                                                    <input type="checkbox" id="setFigureSpanWide" checked>
+                                                    Span Wide Figures across both columns in 2-column layout
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 4. Tables Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>4. Tables &amp; Borders</span>
+                                        </div>
+                                        <div class="form-row-4">
+                                            <div class="form-group">
+                                                <label for="setTableCaptionPos">Caption Position</label>
+                                                <select id="setTableCaptionPos" class="form-input">
+                                                    <option value="above" selected>Above Table (Standard)</option>
+                                                    <option value="below">Below Table</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setTablePrefix">Label Prefix</label>
+                                                <input type="text" id="setTablePrefix" class="form-input" value="Table">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setTableLabelStyle">Label Style</label>
+                                                <select id="setTableLabelStyle" class="form-input">
+                                                    <option value="bold" selected>Bold (Table 1:)</option>
+                                                    <option value="italic">Italic (Table 1:)</option>
+                                                    <option value="normal">Normal</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setTableBorderStyle">Border Rule Style</label>
+                                                <select id="setTableBorderStyle" class="form-input">
+                                                    <option value="booktabs" selected>Booktabs (Publication Quality)</option>
+                                                    <option value="grid">Grid (All cell borders)</option>
+                                                    <option value="plain">Plain (Minimal)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row-3" style="margin-top: 0.3rem;">
+                                            <div class="form-group">
+                                                <label for="setTableCaptionSize">Caption Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setTableCaptionSize" class="form-input" value="9.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setTableSeparator">Label Separator</label>
+                                                <input type="text" id="setTableSeparator" class="form-input" value=".">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setTableCaptionJustification">Caption Justification</label>
+                                                <select id="setTableCaptionJustification" class="form-input">
+                                                    <option value="justified" selected>Justified</option>
+                                                    <option value="left">Left (Ragged Right)</option>
+                                                    <option value="center">Centered</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row-2" style="margin-top: 0.3rem;">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setTableVerticalLines">
+                                                Show vertical column separators
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setTableSpanWide" checked>
+                                                Span Wide Tables across both columns in 2-column layout
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- 5. Equations Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>5. Equations &amp; Math</span>
+                                        </div>
+                                        <div class="form-row-4">
+                                            <div class="form-group">
+                                                <label>Display Numbering</label>
+                                                <div style="padding-top:0.4rem;">
+                                                    <label class="checkbox-label">
+                                                        <input type="checkbox" id="setEquationNumbering" checked>
+                                                        Number Equations
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setEquationAlign">Number Alignment</label>
+                                                <select id="setEquationAlign" class="form-input">
+                                                    <option value="right" selected>Right Aligned (1)</option>
+                                                    <option value="left">Left Aligned (1)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setEquationBracket">Bracket Style</label>
+                                                <select id="setEquationBracket" class="form-input">
+                                                    <option value="parentheses" selected>Parentheses: (1)</option>
+                                                    <option value="brackets">Square Brackets: [1]</option>
+                                                    <option value="none">None: 1</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setEquationSize">Math Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setEquationSize" class="form-input" value="10.0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 6. References Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>6. References &amp; Citations</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setRefHeading">Section Title</label>
+                                                <input type="text" id="setRefHeading" class="form-input" value="References">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setRefCitationStyle">Citation Numbering / Style</label>
+                                                <select id="setRefCitationStyle" class="form-input">
+                                                    <option value="numeric" selected>Numeric [1], [2]</option>
+                                                    <option value="author-year">Author-Year (Smith, 2024)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setRefFontSize">Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setRefFontSize" class="form-input" value="9.0">
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 0.3rem;">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="setRefHangingIndent" checked>
+                                                Hanging Indent for reference entries
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- 7. Conclusion Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>7. Conclusion Block</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setConclusionHeading">Section Heading Label</label>
+                                                <input type="text" id="setConclusionHeading" class="form-input" value="Conclusion">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setConclusionSize">Heading Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setConclusionSize" class="form-input" value="12.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setConclusionNumbering">Section Numbering</label>
+                                                <select id="setConclusionNumbering" class="form-input">
+                                                    <option value="numeric" selected>Numbered (e.g. 5. Conclusion)</option>
+                                                    <option value="none">Unnumbered (Conclusion)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 8. Footnotes & Endnotes Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>8. Footnotes &amp; Endnotes</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setFootnoteSize">Footnote Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setFootnoteSize" class="form-input" value="8.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setFootnoteMarkerStyle">Marker Style</label>
+                                                <select id="setFootnoteMarkerStyle" class="form-input">
+                                                    <option value="numeric" selected>Numeric (1, 2, 3)</option>
+                                                    <option value="symbols">Symbols (*, †, ‡, §)</option>
+                                                    <option value="alpha">Alphabetic (a, b, c)</option>
+                                                </select>
+                                            </div>
+                                            <div style="display:flex;align-items:flex-end;padding-bottom:0.75rem;">
+                                                <label class="checkbox-label">
+                                                    <input type="checkbox" id="setFootnoteRule" checked>
+                                                    Show horizontal separator rule above footnotes
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 9. Blockquotes & Extracts Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>9. Blockquotes &amp; Extracts</span>
+                                        </div>
+                                        <div class="form-row-3">
+                                            <div class="form-group">
+                                                <label for="setQuoteSize">Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setQuoteSize" class="form-input" value="9.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setQuoteStyle">Font Style</label>
+                                                <select id="setQuoteStyle" class="form-input">
+                                                    <option value="italic" selected>Italic (Standard)</option>
+                                                    <option value="normal">Normal (Upright)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setQuoteIndent">Left &amp; Right Indentation (pt)</label>
+                                                <input type="number" step="1.0" id="setQuoteIndent" class="form-input" value="18.0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 10. Lists (Bulleted & Numbered) Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>10. Lists (Bulleted &amp; Numbered)</span>
+                                        </div>
+                                        <div class="form-row-4">
+                                            <div class="form-group">
+                                                <label for="setListBulletMarker">Bullet Marker Style</label>
+                                                <select id="setListBulletMarker" class="form-input">
+                                                    <option value="bullet" selected>Filled Bullet (&bull;)</option>
+                                                    <option value="circle">Open Circle (&cir;)</option>
+                                                    <option value="square">Square (&squ;)</option>
+                                                    <option value="dash">En-dash (&ndash;)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setListNumberingStyle">Numbering Format</label>
+                                                <select id="setListNumberingStyle" class="form-input">
+                                                    <option value="numeric" selected>1., 2., 3.</option>
+                                                    <option value="paren">1), 2), 3)</option>
+                                                    <option value="roman">i., ii., iii.</option>
+                                                    <option value="alpha">(a), (b), (c)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setListIndent">List Indentation (pt)</label>
+                                                <input type="number" step="1.0" id="setListIndent" class="form-input" value="15.0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setListItemSpacing">Item Spacing (pt)</label>
+                                                <input type="number" step="0.5" id="setListItemSpacing" class="form-input" value="3.0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 11. Declarations & Back Matter Block -->
+                                    <div class="settings-subblock">
+                                        <div class="settings-subblock-title">
+                                            <span>11. Declarations &amp; Back Matter (Funding, Acknowledgements, Ethics)</span>
+                                        </div>
+                                        <div class="form-row-2">
+                                            <div class="form-group">
+                                                <label for="setDeclarationsHeadingStyle">Heading &amp; Label Style</label>
+                                                <select id="setDeclarationsHeadingStyle" class="form-input">
+                                                    <option value="inline_bold" selected>Inline Bold Run-in (e.g. Funding: ...)</option>
+                                                    <option value="subsection">Separate Subsection Headings</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="setDeclarationsSize">Font Size (pt)</label>
+                                                <input type="number" step="0.5" id="setDeclarationsSize" class="form-input" value="9.0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Action & Tab Navigation Buttons -->
+                            <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button type="button" id="prevTabBtn" class="btn btn-outline btn-sm">
+                                        &larr; Previous Tab
+                                    </button>
+                                    <button type="button" id="nextTabBtn" class="btn btn-outline btn-sm">
+                                        Next Tab &rarr;
+                                    </button>
+                                </div>
+                                <button type="button" id="saveJournalSettingsBtn" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 0.95rem; font-weight: 700;">
+                                    Save Journal Profile Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 Sūtra Press. Built on open standards (JATS, LaTeX, Tectonic).</p>
+        </footer>
+    </div>
+
+    <!-- AI Routing & Models Configuration Modal -->
+    <div id="aiRoutingModal" class="modal-backdrop hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="modal-card" style="background: var(--bg-card); border-radius: var(--radius-lg); width: 92%; max-width: 580px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid var(--border-color); overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: var(--bg-card-header);">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <span style="font-size: 1.35rem;">🤖</span>
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.05rem;">AI Multi-Model Fallback Engine</h4>
+                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary);">Cascading multi-provider routing (Gemini &rarr; ChatGPT &rarr; Claude &rarr; Local Engine)</p>
+                    </div>
+                </div>
+                <button type="button" id="closeAiRoutingModalBtn" style="background:none; border:none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            <div style="padding: 1.5rem; max-height: 70vh; overflow-y: auto;">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.45;">
+                    Sūtra automatically routes cross-checks through your configured models. If the primary model encounters rate limits or errors, it instantly cascades to the next fallback without interrupting your workflow.
+                </p>
+
+                <!-- Providers List -->
+                <div id="aiProvidersContainer" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+                    <!-- Dynamically populated from /api/ai/status -->
+                </div>
+
+                <!-- API Keys Configuration Form -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <h5 style="margin: 0 0 0.75rem 0; font-size: 0.9rem;">Configure / Update Model API Keys</h5>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label for="aiKeyOpenAI" style="font-size: 0.825rem; font-weight: 600;">OpenAI API Key (ChatGPT / gpt-4o-mini)</label>
+                        <input type="password" id="aiKeyOpenAI" class="form-input" placeholder="sk-proj-..." autocomplete="off">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label for="aiKeyAnthropic" style="font-size: 0.825rem; font-weight: 600;">Anthropic API Key (Claude / claude-3-5-haiku)</label>
+                        <input type="password" id="aiKeyAnthropic" class="form-input" placeholder="sk-ant-..." autocomplete="off">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label for="aiKeyGemini" style="font-size: 0.825rem; font-weight: 600;">Google Gemini API Key (Optional override)</label>
+                        <input type="password" id="aiKeyGemini" class="form-input" placeholder="AIzaSy..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); background: var(--bg-card-footer);">
+                <span id="aiKeysSaveStatus" style="font-size: 0.825rem; color: var(--text-muted);"></span>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" id="cancelAiKeysBtn" class="btn btn-outline btn-sm">Close</button>
+                    <button type="button" id="saveAiKeysBtn" class="btn btn-primary btn-sm">Save &amp; Update Keys</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/shared.js?v=7"></script>
+    <script src="/static/js/journals.js?v=7"></script>
+</body>
+</html>

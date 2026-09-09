@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuscript Structure Review — Sūtra Press</title>
+    <meta name="description" content="Step 1: Identify, tag, and review manuscript structure blocks before output typesetting.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <style>
+        /* Dedicated Step 1 Editor Layout */
+        .editor-shell { display: flex; flex-direction: column; min-height: 100vh; }
+        .editor-topbar {
+            height: var(--navbar-height);
+            background: var(--surface-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .editor-topbar .brand-logo { text-decoration: none; display: flex; align-items: center; gap: 0.625rem; }
+        .editor-topbar .brand-logo-icon { width: 28px; height: 28px; flex-shrink: 0; }
+        .editor-topbar .brand-logo-icon svg { width: 28px; height: 28px; }
+        .editor-topbar .brand-name { font-size: 0.875rem; font-weight: 700; color: var(--text-primary); }
+        .topbar-divider { width: 1px; height: 20px; background: var(--border-color); }
+        .topbar-breadcrumb {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .topbar-breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+        .topbar-breadcrumb a:hover { color: var(--brand-primary); }
+        .topbar-breadcrumb .sep { color: var(--border-color); }
+        .topbar-breadcrumb .current { color: var(--text-primary); font-weight: 500; }
+        .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 0.75rem; }
+        .editor-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .editor-full-workspace { flex: 1; overflow-y: auto; background: var(--bg-app); }
+        
+        .block-text-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            resize: vertical;
+            padding: 0.4rem 0.5rem;
+            transition: var(--transition-fast);
+        }
+        .block-text-input:focus {
+            border-color: var(--brand-indigo) !important;
+            background: var(--bg-card) !important;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-shell" id="appContainer">
+
+        <!-- SLIM TOPBAR -->
+        <header class="editor-topbar" id="appHeader">
+            <a class="brand-logo" href="/" id="brandLogoLink">
+                <div class="brand-logo-icon">
+                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#edGrad)"/>
+                        <path d="M9 23V9h3.2l3.2 8 3.2-8H21.8v14h-2.4V13.5l-2.8 7.2h-2.4l-2.8-7.2V23H9z" fill="#FFF"/>
+                        <defs>
+                            <linearGradient id="edGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#E05D26"/>
+                                <stop offset="1" stop-color="#4F46E5"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="brand-name">Sūtra Press</span>
+            </a>
+
+            <div class="topbar-divider"></div>
+
+            <div class="topbar-breadcrumb">
+                <a href="/">Dashboard</a>
+                <span class="sep">›</span>
+                <span class="current" id="editorManuscriptTitle">Loading…</span>
+            </div>
+
+            <div class="topbar-actions">
+                <a href="/project/{{ project_id }}/docx" class="btn btn-outline btn-sm" id="downloadDocxBtn" title="Download original manuscript DOCX">📥 Download DOCX</a>
+                <button type="button" id="deleteProjectBtn" class="btn btn-danger btn-sm">Delete Project</button>
+                <a href="/" class="btn btn-outline btn-sm" id="backToDashboardBtn">← Dashboard</a>
+                <span class="user-welcome" style="font-size:0.8rem;">Welcome, <strong id="headerUsername">User</strong></span>
+                <button type="button" id="logoutBtn" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </header>
+
+        <!-- TWO-STEP WORKFLOW STEPPER -->
+        <nav class="workflow-stepper" aria-label="Workflow Steps">
+            <span class="step-pill active" id="step1Indicator">
+                <span class="step-num">1</span>
+                <span>Step 1: Manuscript Structure &amp; Tagging</span>
+            </span>
+            <span class="step-arrow-divider">→</span>
+            <a href="/editor/{{ project_id }}/typeset" class="step-pill" id="step2Link">
+                <span class="step-num">2</span>
+                <span>Step 2: Output Typesetting &amp; PDF Preview</span>
+            </a>
+
+            <!-- View Mode Switcher -->
+            <div class="view-mode-group" id="viewModeGroup" style="margin-left: 1rem;">
+                <button type="button" class="view-mode-btn active" data-view="split" id="viewSplitBtn">◫ Split View</button>
+                <button type="button" class="view-mode-btn" data-view="manuscript" id="viewManuscriptBtn">📄 Manuscript Only</button>
+                <button type="button" class="view-mode-btn" data-view="outline" id="viewOutlineBtn">≡ Outline Only</button>
+            </div>
+
+            <div class="workflow-actions-right">
+                <input type="file" id="uploadReferencePdfInput" accept=".pdf" style="display:none;">
+                <button type="button" id="uploadReferencePdfBtn" class="btn btn-outline btn-sm" title="Upload raw reference PDF to cross-check manuscript against layout" style="color:var(--brand-indigo);border-color:var(--brand-indigo);">
+                    📎 Upload Reference PDF
+                </button>
+                <button type="button" id="reIdentifyBtn" class="btn btn-outline btn-sm" title="Re-run rule-based block identification (groups references, fixes tags)">
+                    🔄 Re-Identify Blocks
+                </button>
+                <button type="button" id="aiIdentifyBtn" class="btn btn-ai-assist btn-sm" title="Analyze raw PDF layout and auto-correct misclassified blocks using AI">
+                    ✨ Analyze with AI
+                </button>
+                <button type="button" id="confirmAllBtn" class="btn btn-outline btn-sm" title="Confirm all valid unconfirmed blocks">
+                    ✓ Confirm All Blocks
+                </button>
+                <a href="/editor/{{ project_id }}/typeset" id="proceedToTypesetBtn" class="btn btn-primary btn-sm">
+                    Proceed to Output Typeset →
+                </a>
+            </div>
+        </nav>
+
+        <!-- MAIN STEP 1 CONTENT WORKSPACE: SPLIT GRID -->
+        <div class="editor-body">
+            <div class="step1-split-grid" id="step1SplitGrid">
+
+                <!-- LEFT PANE: SOURCE MANUSCRIPT DOCUMENT WITH BLOCK IDENTIFICATION -->
+                <section class="manuscript-pane" id="manuscriptPane" aria-label="Manuscript Document Canvas">
+                    <div class="manuscript-pane-header">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Manuscript Document</span>
+                            <span class="badge badge-success" style="font-size: 0.72rem; padding: 2px 8px;">Visual Block Identification</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">Click any block to inspect, retag, split, or edit text · <strong>Ctrl+Click</strong> to multi-select</span>
+                            <button type="button" id="addNewBlockBtn" class="btn btn-outline btn-sm" title="Add new block to manuscript">
+                                + Add Block
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Paper Sheet Canvas displaying Manuscript Blocks -->
+                    <div class="manuscript-scroll-area" id="manuscriptScrollArea">
+                        <article class="manuscript-paper-sheet" id="manuscriptDocumentCanvas">
+                            <div style="text-align: center; color: var(--text-muted); padding: 4rem 1rem;">
+                                Loading manuscript blocks and structure…
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- RIGHT PANE: BLOCK INSPECTOR & STRUCTURE NAVIGATOR -->
+                <aside class="step1-inspector-pane" id="blockInspectorPane" aria-label="Block Inspector and Outline">
+
+                    <!-- Top Status & Filters Card -->
+                    <div class="inspector-card" style="padding: 1rem 1.25rem;">
+                        <div id="triageSummaryBanner" class="triage-summary-box clean" style="margin-bottom: 0.75rem;">
+                            Loading manuscript structure…
+                        </div>
+
+                        <!-- Filter Chips -->
+                        <div class="filter-chips-group" id="filterChipsGroup">
+                            <button type="button" class="filter-chip active" data-filter="all">All (<span id="countAll">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="ai_changes" id="filterAiChangesBtn" style="color:var(--brand-indigo);border-color:var(--brand-indigo);display:none;">🤖 AI Changes (<span id="countAiChanges">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="abstract">Abstract (<span id="countAbstract">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="heading">Headings (<span id="countHeadings">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="paragraph">Paragraphs (<span id="countParagraphs">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="figure_table">Figs &amp; Tables (<span id="countFigsTables">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="needs_review">Needs Review (<span id="countNeedsReview">0</span>)</button>
+                            <button type="button" class="filter-chip" data-filter="unapproved" style="color:var(--brand-amber);border-color:var(--brand-amber);">⏳ Unapproved (<span id="countUnapproved">0</span>)</button>
+                        </div>
+                    </div>
+
+                    <!-- Active Block Inspector Deep-Dive -->
+                    <div class="inspector-card" id="activeBlockInspector">
+                        <div class="inspector-card-header">
+                            <div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px;">Active Block</span>
+                                <h4 id="inspectorBlockId" style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0.15rem 0 0 0;">Select a block</h4>
+                            </div>
+                            <span id="inspectorStateBadge" class="badge" style="font-size: 0.75rem;">CONFIRMED</span>
+                        </div>
+
+                        <!-- Warning explanation banner if block has warnings -->
+                        <div id="inspectorWarningBox" class="inspector-warning-box" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;margin-top:2px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span id="inspectorWarningText">Triage warning text</span>
+                        </div>
+
+                        <!-- Tag Type Selection Dropdown -->
+                        <div style="margin-bottom: 0.85rem;">
+                            <label for="inspectorRetagSelect" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:0.35rem;">
+                                Assigned Block Type:
+                            </label>
+                            <select id="inspectorRetagSelect" class="form-input" style="font-weight:600;">
+                                <option value="title">TITLE — Manuscript Main Title</option>
+                                <option value="authors">AUTHORS — Author Byline List</option>
+                                <option value="affiliations">AFFILIATIONS — Institutional Affiliations</option>
+                                <option value="abstract">ABSTRACT — Summary / Abstract</option>
+                                <option value="heading_l1">HEADING L1 — Major Section Heading</option>
+                                <option value="heading_l2">HEADING L2 — Subsection Heading</option>
+                                <option value="heading_l3">HEADING L3 — Sub-subsection Heading</option>
+                                <option value="paragraph">PARAGRAPH — Standard Body Text</option>
+                                <option value="figure">FIGURE — Embedded Figure &amp; Caption</option>
+                                <option value="table">TABLE — Data Table &amp; Caption</option>
+                                <option value="equation">EQUATION — Math Display Formula</option>
+                                <option value="footnote">FOOTNOTE — Note or Funding</option>
+                                <option value="blockquote">BLOCKQUOTE — Indented Block Quote</option>
+                                <option value="list">LIST — Ordered or Unordered List</option>
+                                <option value="reference_list">REFERENCE LIST — Bibliography Entries</option>
+                                <option value="unrecognized">UNRECOGNIZED — Unclassified Content</option>
+                            </select>
+                        </div>
+
+                        <!-- Editable Content for Selected Block -->
+                        <div style="margin-bottom: 0.85rem;">
+                            <label for="inspectorTextInput" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:0.35rem;">
+                                Block Text Content:
+                            </label>
+                            <textarea id="inspectorTextInput" class="form-input" rows="4" style="font-family:inherit;font-size:0.9rem;line-height:1.6;resize:vertical;" placeholder="Block text..."></textarea>
+                        </div>
+
+                        <!-- Action Buttons Grid -->
+                        <div class="inspector-actions-grid">
+                            <button type="button" id="inspectorConfirmBtn" class="btn btn-outline btn-sm" style="color:var(--brand-teal);border-color:var(--brand-teal);">
+                                ✓ Confirm Tag
+                            </button>
+                            <button type="button" id="inspectorSplitBtn" class="btn btn-outline btn-sm">
+                                ✂ Split Block
+                            </button>
+                            <button type="button" id="inspectorMergeBtn" class="btn btn-outline btn-sm">
+                                ⬇ Merge Down
+                            </button>
+                            <button type="button" id="inspectorDeleteBtn" class="btn btn-outline btn-sm" style="color:var(--state-error-text);">
+                                🗑 Delete Block
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Document Outline Mini-Map -->
+                    <div class="inspector-card">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                            <h4 style="font-size:0.95rem;font-weight:700;color:var(--text-primary);margin:0;">Manuscript Structure Outline</h4>
+                            <span id="outlineBlockCount" style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);">0 blocks</span>
+                        </div>
+                        <div class="outline-list" id="structureOutlineList">
+                            <!-- Populated dynamically by editor.js -->
+                        </div>
+                    </div>
+
+                    <!-- Bottom Proceed Bar -->
+                    <div class="inspector-card" style="padding: 1.25rem;">
+                        <strong id="footerStatusText" style="display:block;color:var(--text-primary);font-size:0.9rem;margin-bottom:0.3rem;">
+                            Structure review in progress
+                        </strong>
+                        <p style="margin: 0 0 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+                            Confirm that all manuscript blocks are correctly marked and identified, then proceed to the typeset review.
+                        </p>
+                        <a href="/editor/{{ project_id }}/typeset" id="footerProceedBtn" class="btn btn-primary" style="width: 100%; text-align: center; justify-content: center;">
+                            Proceed to Output Typeset →
+                        </a>
+                    </div>
+
+                    <!-- Hidden container to preserve legacy ID for tests -->
+                    <div id="blocksWorkspace" style="display: none;"></div>
+
+                </aside><!-- step1-inspector-pane -->
+
+            </div><!-- step1-split-grid -->
+        </div><!-- editor-body -->
+
+    </div><!-- editor-shell -->
+
+    <!-- Global Modal for Logs / Notifications -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="modalTitle">Details</h3>
+                <button type="button" id="closeModalBtn" class="btn-close-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <pre id="modalContent">No details available.</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/shared.js?v=4"></script>
+    <script src="/static/js/editor.js?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+# Implementation Plan — Journal Template System & Output Review (v3 Alignment)
+
+This plan details the steps required to implement the remaining parts of the **Journal Template System — Implementation Plan v3**. We will build the Output Review step, the backend inline-edit endpoint, and the tabbed editor interface.
+
+## User Review Required
+
+> [!IMPORTANT]
+> The PDF analyzer, journal settings registry, style-driven LaTeX generator, and journal profile onboarding page are already implemented and fully operational.
+> We are now implementing the **Output Review** flow, which allows editors to edit block content *after* typesetting and see the changes updated in a live PDF preview instantly.
+
+---
+
+## Proposed Changes
+
+We will implement the remaining requirements in the following sequence:
+
+### 1. Backend Endpoint for Live Output Review Edits
+
+#### [MODIFY] [app.py](file:///c:/xampp/htdocs/sutra-engine/sutra/web/app.py)
+- **New Endpoint**: `POST /project/{project_id}/review-edit`
+  - Accepts a JSON payload containing updated blocks (e.g., edited text content, corrected heading levels, updated captions).
+  - Loads the encrypted project state, updates the blocks list, runs block-level triage (to update warnings), and saves the state.
+  - Re-runs the compilation pipeline (generating JATS XML and compiling the LaTeX PDF using Tectonic).
+  - Returns `success: True`, the new `run_id`, and updated schema/compile logs.
+
+### 2. Frontend Layout Restructuring
+
+#### [MODIFY] [index.html](file:///c:/xampp/htdocs/sutra-engine/sutra/web/templates/index.html)
+- **Tabbed Workspace UI**:
+  - Add workspace tab buttons in the project workspace area:
+    - **Tab 1: Manuscript Tag Editor** (Step 1 — Block-level retagging and verification before compilation).
+    - **Tab 2: Output Typeset Review** (Step 2 — Side-by-side typeset PDF and inline text editor for final polish).
+  - Move the **Journal Profile Onboarding UI** out of the hidden dashboard section and make it easily accessible. We will structure it as a standalone section on the main dashboard to keep onboarding separate from individual article workspaces.
+- **Tab 2 Layout**:
+  - A split layout container:
+    - **Left column**: PDF preview iframe displaying the live compiled PDF.
+    - **Right column**: Output editor panel displaying scrollable, editable cards for every block (with its `% sutra-id:` comment reference).
+  - Action buttons: "Regenerate Preview" (triggers live edit + compile) and "Finalize & Download Output" (gatelocks changes and downloads the final package ZIP).
+
+### 3. Frontend Interactive Behavior
+
+#### [MODIFY] [main.js](file:///c:/xampp/htdocs/sutra-engine/sutra/web/static/js/main.js)
+- **Tab Switching**: Handle tab toggling between the Tag Editor (Tab 1) and Output Review (Tab 2).
+- **Tab 2 Render Logic**:
+  - Render each block of the document in editable input boxes/textareas.
+  - Track edited blocks dynamically and apply a CSS highlight class (e.g., `.edited-block` with a subtle yellow background) to show unsaved/modified content.
+  - When the "Regenerate" button is clicked:
+    - Gather all text/tag modifications from the editable cards.
+    - Send them to `/project/{project_id}/review-edit`.
+    - Reload the PDF preview iframe src with the new `run_id`.
+    - Refresh block states and clear the unsaved highlights once the new compilation succeeds.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Add a new integration test suite to [test_web_app.py](file:///c:/xampp/htdocs/sutra-engine/tests/test_web_app.py):
+  - `test_journal_profiles_api`: Verifies analyze, save, list, get, and delete profile endpoints.
+  - `test_project_review_edit_flow`: Uploads a DOCX, runs generate, calls `/review-edit` to modify a block's text content, verifies the PDF compiles successfully with the modified text, and downloads the updated ZIP.
+- Execute pytest:
+  ```powershell
+  .venv\Scripts\pytest
+  ```
+
+### Manual Verification
+1. Start the uvicorn web server:
+   ```powershell
+   .venv\Scripts\python.exe run_web.py
+   ```
+2. Open `http://127.0.0.1:8010/` in the browser, log in as `admin`/`admin`.
+3. Upload `test_manuscript.docx` and click Generate with a Journal Profile.
+4. Go to the "Output Typeset Review" tab.
+5. Edit a heading text or paragraph text in the right pane, then click **Regenerate**.
+6. Verify the PDF preview on the left updates instantly reflecting the change.

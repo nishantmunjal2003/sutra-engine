@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Output Typesetting &amp; PDF Preview — Sūtra Press</title>
+    <meta name="description" content="Step 2: Compile synchronized JATS XML and LaTeX PDF, preview typesetting, and make fine-tuned corrections.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <style>
+        .editor-shell { display: flex; flex-direction: column; min-height: 100vh; }
+        .editor-topbar {
+            height: var(--navbar-height);
+            background: var(--surface-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .editor-topbar .brand-logo { text-decoration: none; display: flex; align-items: center; gap: 0.625rem; }
+        .editor-topbar .brand-logo-icon { width: 28px; height: 28px; flex-shrink: 0; }
+        .editor-topbar .brand-logo-icon svg { width: 28px; height: 28px; }
+        .editor-topbar .brand-name { font-size: 0.875rem; font-weight: 700; color: var(--text-primary); }
+        .topbar-divider { width: 1px; height: 20px; background: var(--border-color); }
+        .topbar-breadcrumb {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .topbar-breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+        .topbar-breadcrumb a:hover { color: var(--brand-primary); }
+        .topbar-breadcrumb .sep { color: var(--border-color); }
+        .topbar-breadcrumb .current { color: var(--text-primary); font-weight: 500; }
+        .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 0.75rem; }
+        .editor-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .preview-pane-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .preview-pane-card .preview-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            background: #525659;
+            border-radius: var(--radius-md);
+        }
+        .preview-iframe-wrapper {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-shell" id="appContainer">
+
+        <!-- SLIM TOPBAR -->
+        <header class="editor-topbar" id="appHeader">
+            <a class="brand-logo" href="/" id="brandLogoLink">
+                <div class="brand-logo-icon">
+                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#tpGrad)"/>
+                        <path d="M9 23V9h3.2l3.2 8 3.2-8H21.8v14h-2.4V13.5l-2.8 7.2h-2.4l-2.8-7.2V23H9z" fill="#FFF"/>
+                        <defs>
+                            <linearGradient id="tpGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#E05D26"/>
+                                <stop offset="1" stop-color="#4F46E5"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="brand-name">Sūtra Press</span>
+            </a>
+
+            <div class="topbar-divider"></div>
+
+            <div class="topbar-breadcrumb">
+                <a href="/">Dashboard</a>
+                <span class="sep">›</span>
+                <a href="/editor/{{ project_id }}" id="breadcrumbEditorLink">Structure Review</a>
+                <span class="sep">›</span>
+                <span class="current" id="editorManuscriptTitle">Output Typeset</span>
+            </div>
+
+            <div class="topbar-actions">
+                <button type="button" id="deleteProjectBtn" class="btn btn-danger btn-sm">Delete Project</button>
+                <a href="/editor/{{ project_id }}" class="btn btn-outline btn-sm" id="backToStructureBtn">← Structure Review</a>
+                <a href="/" class="btn btn-outline btn-sm" id="backToDashboardBtn">Dashboard</a>
+                <span class="user-welcome" style="font-size:0.8rem;">Welcome, <strong id="headerUsername">User</strong></span>
+                <button type="button" id="logoutBtn" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </header>
+
+        <!-- TWO-STEP WORKFLOW STEPPER -->
+        <nav class="workflow-stepper" aria-label="Workflow Steps">
+            <a href="/editor/{{ project_id }}" class="step-pill completed" id="step1CompletedLink">
+                <span class="step-num">✓</span>
+                <span>Step 1: Manuscript Structure &amp; Tagging</span>
+            </a>
+            <span class="step-arrow-divider">→</span>
+            <span class="step-pill active" id="step2ActiveIndicator">
+                <span class="step-num">2</span>
+                <span>Step 2: Output Typesetting &amp; PDF Preview</span>
+            </span>
+
+            <div class="workflow-actions-right">
+                <a href="/editor/{{ project_id }}" class="btn btn-outline btn-sm">
+                    ← Edit Manuscript Structure
+                </a>
+            </div>
+        </nav>
+
+        <!-- STEP 2 SPLIT WORKSPACE -->
+        <div class="editor-body">
+            <div class="typeset-grid">
+
+                <!-- LEFT COLUMN: EMBEDDED PDF PREVIEW -->
+                <div class="typeset-preview-pane">
+                    <section id="pdfPreviewCard" class="panel-card preview-pane-card">
+                        <div class="panel-header" style="justify-content: space-between;">
+                            <div>
+                                <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">Embedded PDF Preview</h3>
+                                <p class="panel-desc" style="margin: 0;">Live synchronized view of the compiled typesetting output.</p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <button type="button" id="reloadPdfBtn" class="btn btn-outline btn-sm" title="Reload PDF preview">
+                                    ↻ Reload
+                                </button>
+                                <a href="#" id="openPdfNewTabBtn" target="_blank" class="btn btn-outline btn-sm hidden" title="Open PDF in new window">
+                                    ↗ Fullscreen
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="preview-content">
+                            <!-- Placeholder before compilation -->
+                            <div id="previewPlaceholder" class="preview-placeholder">
+                                <div class="placeholder-content">
+                                    <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                                    </svg>
+                                    <p class="placeholder-text-primary">PDF Preview is ready for compilation</p>
+                                    <p class="placeholder-text-secondary">Click "Generate JATS-XML, PDF &amp; LaTeX" on the right to compile and inspect your typeset output.</p>
+                                </div>
+                            </div>
+                            <!-- Live PDF Iframe -->
+                            <div id="previewIframeContainer" class="preview-iframe-wrapper hidden">
+                                <iframe id="pdfPreviewIframe" src="" type="application/pdf" style="width: 100%; height: 100%; border: none; min-height: 520px;"></iframe>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- RIGHT COLUMN: CONTROLS, COMPILATION & CORRECTIONS -->
+                <div class="typeset-controls-pane">
+
+                    <!-- Synchronized Compilation Card -->
+                    <section class="panel-card">
+                        <div class="panel-header" style="flex-direction: column; align-items: flex-start;">
+                            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Synchronized Compilation</h3>
+                            <p class="panel-desc" style="margin: 0;">Configure styling profile and compile schema-validated JATS XML and publication PDF.</p>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label for="journalSelect" class="group-title" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Journal Style Profile</label>
+                            <select id="journalSelect" class="form-input">
+                                <option value="generic">Generic Style (Default)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label class="group-title" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; display: block;">LaTeX Typesetting Layout</label>
+                            <div class="radio-cards">
+                                <label class="radio-card active" id="layoutSingleCard">
+                                    <input type="radio" name="layout" value="single" checked class="hidden" id="layoutSingleInput">
+                                    <span class="radio-title">Single Column</span>
+                                    <span class="radio-desc">Ideal for reviews, preliminary manuscripts</span>
+                                </label>
+                                <label class="radio-card" id="layoutDoubleCard">
+                                    <input type="radio" name="layout" value="double" class="hidden" id="layoutDoubleInput">
+                                    <span class="radio-title">Two Columns</span>
+                                    <span class="radio-desc">Standard IEEE/STEM layout</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="button" id="generateBtn" class="btn btn-primary btn-full">
+                            <span>Generate JATS-XML, PDF &amp; LaTeX</span>
+                        </button>
+                    </section>
+
+                    <!-- Pipeline Progress Card -->
+                    <section id="progressCard" class="panel-card progress-card hidden">
+                        <div class="panel-header" style="flex-direction: column; align-items: flex-start;">
+                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">Compilation Pipeline</h3>
+                            <p class="panel-desc">Executing single-source JATS and LaTeX compilation stages…</p>
+                        </div>
+                        <div class="progress-stages">
+                            <div class="stage-item" id="stage-jats">
+                                <div class="stage-bullet"></div>
+                                <span class="stage-name">Generating validated JATS 1.3 XML…</span>
+                            </div>
+                            <div class="stage-item" id="stage-latex">
+                                <div class="stage-bullet"></div>
+                                <span class="stage-name">Generating LaTeX template…</span>
+                            </div>
+                            <div class="stage-item" id="stage-pdf">
+                                <div class="stage-bullet"></div>
+                                <span class="stage-name">Compiling PDF (Tectonic engine)…</span>
+                            </div>
+                            <div class="stage-item" id="stage-package">
+                                <div class="stage-bullet"></div>
+                                <span class="stage-name">Packaging outputs into ZIP…</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Synchronized Outputs & Download Card -->
+                    <section id="resultsCard" class="panel-card results-card hidden">
+                        <div class="results-top">
+                            <div>
+                                <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">Synchronized Outputs</h3>
+                                <p class="package-name" id="packageFileName">manuscript.docx</p>
+                            </div>
+                            <div id="statusBadge" class="status-pill pass">PASSED</div>
+                        </div>
+
+                        <div class="reports-grid">
+                            <div class="report-box" id="triageBox">
+                                <div class="report-info">
+                                    <span class="report-label">Triage Report</span>
+                                    <span class="report-status text-success" id="triageStatus">PASSED</span>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-sm" id="viewTriageReportBtn">View Triage</button>
+                            </div>
+                            <div class="report-box" id="xmlBox">
+                                <div class="report-info">
+                                    <span class="report-label">XML Validation</span>
+                                    <span class="report-status text-success" id="xmlStatus">PASSED</span>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-sm" id="viewXmlErrorsBtn">Schema Logs</button>
+                            </div>
+                            <div class="report-box" id="pdfBox">
+                                <div class="report-info">
+                                    <span class="report-label">PDF Compile</span>
+                                    <span class="report-status text-success" id="pdfStatus">PASSED</span>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-sm" id="viewPdfErrorsBtn">LaTeX Logs</button>
+                            </div>
+                        </div>
+
+                        <div class="downloads-panel">
+                            <a href="#" id="downloadZipBtn" class="btn btn-primary btn-full">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                Download Package (ZIP)
+                            </a>
+                            <div class="downloads-grid">
+                                <a href="#" id="downloadXmlBtn" class="btn btn-outline btn-sm">JATS XML</a>
+                                <a href="#" id="downloadPdfBtn" class="btn btn-outline btn-sm">Typeset PDF</a>
+                                <a href="#" id="downloadTexBtn" class="btn btn-outline btn-sm">LaTeX Source</a>
+                            </div>
+                            <a href="#" id="downloadLogBtn" class="btn btn-outline btn-sm btn-full">Download Review Log</a>
+                        </div>
+                    </section>
+
+                    <!-- Output Inline Corrections Card -->
+                    <section class="panel-card">
+                        <div class="panel-header" style="flex-direction: column; align-items: flex-start;">
+                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Fine-tune Output Text</h3>
+                            <p class="panel-desc" style="margin: 0;">Make small text fixes or edits. Click Regenerate to instantly update your typeset PDF.</p>
+                        </div>
+                        <div id="outputReviewWorkspace" class="editor-workspace" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Rendered dynamically -->
+                        </div>
+                        <div class="actions-panel" style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                            <button type="button" id="regenerateOutputBtn" class="btn btn-primary" style="flex: 1;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                                Regenerate PDF
+                            </button>
+                            <button type="button" id="finalizeOutputBtn" class="btn btn-success" style="flex: 1;">
+                                Finalize &amp; Lock Output
+                            </button>
+                        </div>
+                    </section>
+
+                </div><!-- typeset-controls-pane -->
+            </div><!-- typeset-grid -->
+        </div><!-- editor-body -->
+
+    </div><!-- editor-shell -->
+
+    <!-- Global Modal for Logs / Reports -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="modalTitle">Report Details</h3>
+                <button type="button" id="closeModalBtn" class="btn-close-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <pre id="modalContent">No logs available.</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/shared.js?v=4"></script>
+    <script src="/static/js/typeset.js?v=4"></script>
+</body>
+</html>
