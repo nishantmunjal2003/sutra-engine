@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: sutra-engine
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      # PORT is injected automatically by Render; run_web.py already reads it.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SUTRA_SECRET_KEY
+        sync: false
+    disk:
+      name: sutra-data
+      mountPath: /app/build
+      sizeGB: 1

@@ -21,7 +21,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Tectonic (modern, standalone, self-contained LaTeX engine)
 ARG TECTONIC_VERSION=0.15.0
-RUN curl -fsSL "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+RUN ARCH=$(uname -m) && \
+    case "$ARCH" in \
+        x86_64)  TECTONIC_ARCH="x86_64-unknown-linux-musl" ;; \
+        aarch64|arm64) TECTONIC_ARCH="aarch64-unknown-linux-musl" ;; \
+        *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}.tar.gz" \
     | tar -xz -C /usr/local/bin/ \
     && chmod +x /usr/local/bin/tectonic \
     && tectonic --version

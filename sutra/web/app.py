@@ -1,5 +1,11 @@
 import os
 import re
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 import uuid
 import zipfile
 import shutil
@@ -28,12 +34,18 @@ app = FastAPI(title="Sutra Press Web Conversion Engine")
 current_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(current_dir, "static")
 templates_dir = os.path.join(current_dir, "templates")
-build_root = os.path.join(os.path.dirname(os.path.dirname(current_dir)), "build")
+if os.environ.get("VERCEL"):
+    build_root = os.path.join("/tmp", "build")
+else:
+    build_root = os.environ.get("BUILD_ROOT", os.path.join(os.path.dirname(os.path.dirname(current_dir)), "build"))
 
 # Create dirs if missing
-os.makedirs(static_dir, exist_ok=True)
-os.makedirs(templates_dir, exist_ok=True)
-os.makedirs(build_root, exist_ok=True)
+try:
+    os.makedirs(static_dir, exist_ok=True)
+    os.makedirs(templates_dir, exist_ok=True)
+    os.makedirs(build_root, exist_ok=True)
+except OSError:
+    pass
 
 # Mount static files and templates
 app.mount("/static", StaticFiles(directory=static_dir), name="static")

@@ -27,6 +27,7 @@ dependencies = [
     "httpx>=0.25.0",
     "pdfplumber>=0.10.0",
     "pypdfium2>=4.0.0",
+    "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -42,3 +43,6 @@ sutra = "sutra.cli:cli"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["sutra*"]
+
+[tool.vercel]
+entrypoint = "sutra.web.app:app"

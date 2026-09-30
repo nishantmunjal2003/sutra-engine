@@ -1,9 +1,15 @@
 import os
 import uvicorn
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # AI Multi-Model Cascading Fallback Keys (Gemini -> ChatGPT -> Claude -> Local Semantic Engine)
-if not os.environ.get("GEMINI_API_KEY"):
-    os.environ["GEMINI_API_KEY"] = "AQ.Ab8RN6IDH607A1KEwR4Gmgn6FYDIzlTydHMkrOKrPZYaBPn0sA"
+# Keys must be supplied via environment variables / host secrets (.env locally,
+# platform-managed env vars in production) -- never hardcoded here.
 
 # Placeholders for ChatGPT and Claude keys (will be used automatically once set)
 if not os.environ.get("OPENAI_API_KEY"):
